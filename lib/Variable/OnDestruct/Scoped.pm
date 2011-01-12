@@ -1,4 +1,6 @@
 package Variable::OnDestruct::Scoped;
+
+use 5.010;
 use strict;
 use warnings FATAL => 'all';
 
@@ -48,7 +50,7 @@ This module contains one function, which is exported by default.
 
 =head2 on_destruct $variable, \&sub;
 
-This function adds a destructor to a variable. 
+This function adds a destructor to a variable.
 
 =head1 AUTHOR
 
@@ -65,7 +67,7 @@ automatically be notified of progress on your bug as I make changes.
 
 You can find documentation for this module with the perldoc command.
 
-    perldoc Variable::OnDestruct
+    perldoc Variable::OnDestruct::Scoped
 
 
 You can also look for information at:
@@ -74,25 +76,25 @@ You can also look for information at:
 
 =item * RT: CPAN's request tracker
 
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Variable-OnDestruct>
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Variable-OnDestruct-Scoped>
 
 =item * AnnoCPAN: Annotated CPAN documentation
 
-L<http://annocpan.org/dist/Variable-OnDestruct>
+L<http://annocpan.org/dist/Variable-OnDestruct-Scoped>
 
 =item * CPAN Ratings
 
-L<http://cpanratings.perl.org/d/Variable-OnDestruct>
+L<http://cpanratings.perl.org/d/Variable-OnDestruct-Scoped>
 
 =item * Search CPAN
 
-L<http://search.cpan.org/dist/Variable-OnDestruct>
+L<http://search.cpan.org/dist/Variable-OnDestruct-Scoped>
 
 =back
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright 2009,2010 Leon Timmermans, all rights reserved.
+Copyright 2011 Leon Timmermans, all rights reserved.
 
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
