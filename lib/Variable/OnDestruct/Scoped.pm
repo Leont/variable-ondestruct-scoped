@@ -10,23 +10,11 @@ use XSLoader;
 ##no critic (ProhibitAutomaticExportation)
 our @EXPORT = qw/on_destruct/;
 
-our $VERSION = '0.001';
-
-XSLoader::load('Variable::OnDestruct::Scoped', $VERSION);
+XSLoader::load('Variable::OnDestruct::Scoped', __PACKAGE__->VERSION);
 
 1;    # End of Variable::OnDestruct::Scoped
 
-__END__
-
-=head1 NAME
-
-Variable::OnDestruct::Scoped - Call a subroutine on destruction of a variable.
-
-=head1 VERSION
-
-Version 0.001
-
-=cut
+# ABSTRACT: Call a subroutine on destruction of a variable.
 
 =head1 SYNOPSIS
 
@@ -52,51 +40,3 @@ This module contains one function, which is exported by default.
 
 This function adds a destructor to a variable.
 
-=head1 AUTHOR
-
-Leon Timmermans, C<< <leont at cpan.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-devel-ondestruct at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Variable-OnDestruct>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Variable::OnDestruct::Scoped
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Variable-OnDestruct-Scoped>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Variable-OnDestruct-Scoped>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Variable-OnDestruct-Scoped>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Variable-OnDestruct-Scoped>
-
-=back
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2011 Leon Timmermans, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
-
-=cut
