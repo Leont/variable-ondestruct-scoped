@@ -20,7 +20,6 @@ sub DESTROY {
 	is $counter, 0, "Second array didn't trigger!";
 }
 
-my @bar;
 my @success = sort qw/scalar array hash code glob/;
 {
 	my %got;
@@ -29,12 +28,11 @@ my @success = sort qw/scalar array hash code glob/;
 		my $var = 'foo';
 		my $sub = sub { $var };
 		my $glob = gensym();
-		my %hash;
 
+		on_destruct my %hash,      sub { $got{hash}++ };
 		on_destruct $var,       sub { $got{scalar}++ };
 		on_destruct &{ $sub },  sub { $got{code}++ };
 		on_destruct *{ $glob }, sub { $got{glob}++ };
-		on_destruct %hash,      sub { $got{hash}++ };
 		on_destruct my @array,  sub { $got{array}++ };
 	}
 	eq_or_diff [ sort keys %got ], \@success, 'Destructors were called';
