@@ -3,16 +3,36 @@
 #include "perl.h"
 #include "XSUB.h"
 
-static const U16 magic_number = 0x5653;
+static int S_in_final_destruct(pTHX_ SV* var) {
+	int ret = PL_dirty && !sv_isobject(var);
+	if (ret)
+		Perl_warn(aTHX_ "Can't call destructor for non-object 0x%p in global destruction\n", var);
+	return ret;
+}
+#define in_final_destruct(var) S_in_final_destruct(aTHX_ var)
 
-int weak_set(pTHX_ SV* sv, MAGIC* magic) {
-    dSP;
-    PUSHMARK(SP);
-    call_sv(magic->mg_obj, G_VOID | G_DISCARD | G_EVAL | G_KEEPERR);
+static int weak_set(pTHX_ SV* var, MAGIC* magic) {
+	dSP;
+	if (SvOK(var))
+		return 0;
+	if (in_final_destruct(var))
+		return 1;
+	PUSHMARK(SP);
+	call_sv(magic->mg_obj, G_VOID | G_DISCARD | G_EVAL | G_KEEPERR);
 	return 0;
 }
 
-MGVTBL weak_magic = { NULL, weak_set, NULL, NULL, NULL };
+static int strong_free(pTHX_ SV* var, MAGIC* magic) {
+	dSP;
+	if (in_final_destruct(var))
+		return 1;
+	PUSHMARK(SP);
+	call_sv(magic->mg_obj, G_VOID | G_DISCARD | G_EVAL | G_KEEPERR);
+	return 0;
+}
+
+static const MGVTBL weak_magic = { NULL, weak_set, NULL, NULL, NULL };
+static const MGVTBL strong_magic = { NULL, NULL, NULL, NULL, strong_free };
 
 MODULE = Variable::OnDestruct::Scoped				PACKAGE = Variable::OnDestruct::Scoped
 
@@ -22,13 +42,18 @@ on_destruct(reference, subref)
 	CV* subref;
 	PROTOTYPE: \[$@%&*]&
 	CODE:
-		SV* canary = newSVsv(reference);
-		sv_rvweaken(canary);
-		SvREADONLY_on(canary);
-		RETVAL = newRV_noinc(canary);
-		if (GIMME_V == G_VOID)
-			sv_magicext(canary, (SV*)subref, PERL_MAGIC_ext, &weak_magic, (const char*)RETVAL, HEf_SVKEY);
-		else
+		if (GIMME_V == G_VOID) {
+			sv_magicext(reference, (SV*)subref, PERL_MAGIC_ext, &strong_magic, NULL, 0);
+			RETVAL = &PL_sv_undef;
+		}
+		else {
+			SV* canary = newSVsv(reference);
+			sv_rvweaken(canary);
+			SvREADONLY_on(canary);
 			sv_magicext(canary, (SV*)subref, PERL_MAGIC_ext, &weak_magic, NULL, 0);
+			RETVAL = newSVpvn(NULL, 0);
+			sv_magicext(RETVAL, canary, PERL_MAGIC_ext, NULL, NULL, 0);
+			SvREFCNT_dec(canary);
+		}
 	OUTPUT:
 		RETVAL
