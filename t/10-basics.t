@@ -15,8 +15,10 @@ sub DESTROY {
 
 {
 	my $counter = 0;
+	{
 	my $self = on_destruct my @array2, sub { $counter = 1 };
 	undef $self;
+	}
 	is $counter, 0, "Second array didn't trigger!";
 }
 

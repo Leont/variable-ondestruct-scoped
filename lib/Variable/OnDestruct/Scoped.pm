@@ -2,7 +2,7 @@ package Variable::OnDestruct::Scoped;
 
 use 5.010;
 use strict;
-use warnings FATAL => 'all';
+use warnings;
 
 use Exporter 5.57 'import';
 use XSLoader;
@@ -20,23 +20,29 @@ XSLoader::load('Variable::OnDestruct::Scoped', __PACKAGE__->VERSION);
 
  use Variable::OnDestruct::Scoped;
 
- my $handle on_destruct $var, sub { do_something() };
- on_destruct @array, sub { do_something_else() };
- on_destruct %array, sub { hashes_work_too() };
- on_destruct &$sub, sub { so_do_closures($but_not_normal_subs) };
- on_destruct *$glob, sub { and_even_globs($similar_caveats_as_subs_though) };
+ my @handle = on_destruct $var, sub { do_something() };
+ push @handle, on_destruct @array, sub { do_something_else() };
+ push @handle, on_destruct %array, sub { hashes_work_too() };
+ push @handle, on_destruct &$sub, sub { so_do_closures($but_not_normal_subs) };
+ push @handle, on_destruct *$glob, sub { and_even_globs($similar_caveats_as_subs_though) };
  
- undef $handle if $want_to_cancel_destructor;
+ @handle = () if $want_to_cancel_destructor;
 
 =head1 DESCRIPTION
 
-This module allows you to let a function be called when a variable gets destroyed. The destructor will work not only on scalars but also on arrays, hashes, subs and globs. For the latter two you should realize that most of them aren't scoped like normal variables. Subs for example will only work like you expect them to when they are closures.
+This module allows you to let a function be called when a variable gets destroyed. The destructor will work not only on scalars but also on arrays, hashes, subs and globs. For the latter two you should realize that most of them aren't scoped like normal variables. Subs for example will only work like you expect them to when they are closures (otherwise they're immortal).
 
-=head1 FUNCTIONS
+=func on_destruct $variable, \&sub;
 
-This module contains one function, which is exported by default.
+This function adds a destructor callback to a variable. This callback will be called when the variable is destroyed, but only if the canary it returns is still alive (meaning it's stored somewhere). If the canary is destructed first the callback will not be called. This function is exported by default.
 
-=head2 on_destruct $variable, \&sub;
+=head2 SEE ALSO
 
-This function adds a destructor to a variable.
+=over 4
+
+=item * L<Variable::OnDestruct|Variable::OnDestruct>
+
+=item * L<Variable::Magic|Variable::Magic>
+
+=back
 
