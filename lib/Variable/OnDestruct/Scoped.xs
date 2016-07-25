@@ -51,9 +51,7 @@ on_destruct(reference, subref)
 			sv_rvweaken(canary);
 			SvREADONLY_on(canary);
 			sv_magicext(canary, (SV*)subref, PERL_MAGIC_ext, &weak_magic, NULL, 0);
-			RETVAL = newSVpvn(NULL, 0);
-			sv_magicext(RETVAL, canary, PERL_MAGIC_ext, NULL, NULL, 0);
-			SvREFCNT_dec(canary);
+			RETVAL = newRV_noinc(canary);
 		}
 	OUTPUT:
 		RETVAL

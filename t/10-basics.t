@@ -54,7 +54,7 @@ my @success = sort qw/scalar array hash code glob/;
 		push @throwaway, on_destruct *{ $glob }, sub { $got{glob}++ };
 		@throwaway = ();
 	}
-	eq_or_diff [ sort keys %got ], [], 'Destructors were not called';
+	eq_or_diff [ sort keys %got ], [], 'Destructors were not called again';
 }
 
 {
@@ -72,5 +72,5 @@ my @success = sort qw/scalar array hash code glob/;
 		push @handles, on_destruct my %hash,   sub { $got{hash}++ };
 		push @handles, on_destruct *{ $glob }, sub { $got{glob}++ };
 	}
-	eq_or_diff [ sort keys %got ], \@success, 'Destructors were called again';
+	eq_or_diff [ sort keys %got ], \@success, 'Destructors were called once more';
 }
