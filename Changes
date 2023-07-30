@@ -1,6 +1,8 @@
 Revision history for Variable-OnDestruct-Scoped
 
 {{$NEXT}}
+
+0.002     2023-07-30 13:01:34+02:00 Europe/Brussels
           - Fix undef issue on perl < 5.22
           - Set minimum perl to 5.16 because of tests failures
 
